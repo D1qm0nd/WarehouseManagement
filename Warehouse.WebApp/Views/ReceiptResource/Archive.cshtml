@@ -1,0 +1,52 @@
+@model Models.Entities.ReceiptResource
+
+@{
+    ViewData["Title"] = "Archive";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Archive</h1>
+
+<h3>Are you sure you want to archive this?</h3>
+<div>
+    <h4>ReceiptResource</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.UnitOfMeasurementId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.UnitOfMeasurementId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Count)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Count)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DocumentOfReceipt)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DocumentOfReceipt.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Resource)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Resource.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Condition)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Condition)
+        </dd>
+    </dl>
+    
+    <form asp-action="Archive">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Archive" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

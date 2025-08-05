@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  warehouse-db:
+    container_name: warehouse-db
+    image: postgres:15
+    build:
+      context: .
+    env_file:
+      - docker-compose-secrets.env
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db-data:/var/lib/postgresq/db-data
+    network_mode: host
+    restart: on-failure

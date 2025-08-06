@@ -1,0 +1,33 @@
+@model IEnumerable<Models.Entities.UnitOfMeasurement>
+
+@{
+    ViewData["Title"] = "Archive";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Archive</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Condition)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Condition)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Name">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Name">Details</a> |
+                <a asp-action="Activate" asp-route-id="@item.Name">Activate</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

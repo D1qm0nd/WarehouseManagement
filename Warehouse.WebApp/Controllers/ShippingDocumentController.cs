@@ -23,7 +23,12 @@ namespace Warehouse.WebApp.Controllers
         // GET: ShippingDocument
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ShippingDocuments.ToListAsync());
+            return View(await _context.ShippingDocuments.Where(sd => sd.Condition != Condition.Archived).ToListAsync());
+        }
+        
+        public async Task<IActionResult> Archived()
+        {
+            return View(await _context.ShippingDocuments.Where(sd => sd.Condition == Condition.Archived).ToListAsync());
         }
 
         // GET: ShippingDocument/Details/5
@@ -146,6 +151,40 @@ namespace Warehouse.WebApp.Controllers
             if (shippingDocument != null)
             {
                 shippingDocument.Condition = Condition.Archived;
+                _context.ShippingDocuments.Update(shippingDocument);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        
+        // GET: ShippingDocument/Activate/5
+        public async Task<IActionResult> Activate(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var shippingDocument = await _context.ShippingDocuments
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (shippingDocument == null)
+            {
+                return NotFound();
+            }
+
+            return View(shippingDocument);
+        }
+
+        // POST: ShippingDocument/Activate/5
+        [HttpPost, ActionName("Activate")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ActivateConfirmed(Guid id)
+        {
+            var shippingDocument = await _context.ShippingDocuments.FindAsync(id);
+            if (shippingDocument != null)
+            {
+                shippingDocument.Condition = Condition.Active;
                 _context.ShippingDocuments.Update(shippingDocument);
             }
 

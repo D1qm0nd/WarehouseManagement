@@ -23,10 +23,17 @@ namespace Warehouse.WebApp.Controllers
         // GET: ShippingResource
         public async Task<IActionResult> Index()
         {
-            var warehouseDbContext = _context.ShippingResources.Include(s => s.Resource);
+            var warehouseDbContext = _context.ShippingResources.Where(sr => sr.Condition != Condition.Archived).Include(s => s.Resource);
             return View(await warehouseDbContext.ToListAsync());
         }
 
+        // GET: ShippingResource
+        public async Task<IActionResult> Archived()
+        {
+            var warehouseDbContext = _context.ShippingResources.Where(sr => sr.Condition == Condition.Archived).Include(s => s.Resource);
+            return View(await warehouseDbContext.ToListAsync());
+        }
+        
         // GET: ShippingResource/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -152,6 +159,41 @@ namespace Warehouse.WebApp.Controllers
             if (shippingResource != null)
             {
                 shippingResource.Condition = Condition.Archived;
+                _context.ShippingResources.Update(shippingResource);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        
+        // GET: ShippingResource/Activate/5
+        public async Task<IActionResult> Activate(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var shippingResource = await _context.ShippingResources
+                .Include(s => s.Resource)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (shippingResource == null)
+            {
+                return NotFound();
+            }
+
+            return View(shippingResource);
+        }
+
+        // POST: ShippingResource/Activate/5
+        [HttpPost, ActionName("Activate")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ActivateConfirmed(Guid id)
+        {
+            var shippingResource = await _context.ShippingResources.FindAsync(id);
+            if (shippingResource != null)
+            {
+                shippingResource.Condition = Condition.Active;
                 _context.ShippingResources.Update(shippingResource);
             }
 

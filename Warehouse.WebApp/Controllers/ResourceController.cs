@@ -23,9 +23,15 @@ namespace Warehouse.WebApp.Controllers
         // GET: Resource
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Resources.ToListAsync());
+            return View(await _context.Resources.Where(r => r.Condition == Condition.Archived).ToListAsync());
         }
 
+        // GET: Resource
+        public async Task<IActionResult> Archived()
+        {
+            return View(await _context.Resources.Where(r => r.Condition != Condition.Archived).ToListAsync());
+        }
+        
         // GET: Resource/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -140,7 +146,7 @@ namespace Warehouse.WebApp.Controllers
         // POST: Resource/Delete/5
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> ArchiveConfirmed(Guid id)
         {
             var resource = await _context.Resources.FindAsync(id);
             if (resource != null)
@@ -152,6 +158,41 @@ namespace Warehouse.WebApp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        
+        // GET: Resource/Delete/5
+        public async Task<IActionResult> Activate(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var resource = await _context.Resources
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (resource == null)
+            {
+                return NotFound();
+            }
+
+            return View(resource);
+        }
+
+        // POST: Resource/Delete/5
+        [HttpPost, ActionName("Activate")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ActivateConfirmed(Guid id)
+        {
+            var resource = await _context.Resources.FindAsync(id);
+            if (resource != null)
+            {
+                resource.Condition = Condition.Active;
+                _context.Resources.Update(resource);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        
 
         private bool ResourceExists(Guid id)
         {

@@ -24,6 +24,13 @@ namespace Warehouse.WebApp.Controllers
         public async Task<IActionResult> Index()
         {
             var warehouseDbContext = _context.ResourcesOfReceipt.Include(r => r.DocumentOfReceipt).Include(r => r.Resource);
+            return View(await warehouseDbContext.Where(rr => rr.Condition != Condition.Archived).ToListAsync());
+        }
+        
+        // GET: ReceiptResource
+        public async Task<IActionResult> Archived()
+        {
+            var warehouseDbContext = _context.ResourcesOfReceipt.Where(rr => rr.Condition == Condition.Archived).Include(r => r.DocumentOfReceipt).Include(r => r.Resource);
             return View(await warehouseDbContext.ToListAsync());
         }
 
@@ -159,6 +166,42 @@ namespace Warehouse.WebApp.Controllers
             if (receiptResource != null)
             {
                 receiptResource.Condition = Condition.Archived;
+                _context.ResourcesOfReceipt.Update(receiptResource);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        
+        // GET: ReceiptResource/Activate/5
+        public async Task<IActionResult> Activate(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var receiptResource = await _context.ResourcesOfReceipt
+                .Include(r => r.DocumentOfReceipt)
+                .Include(r => r.Resource)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (receiptResource == null)
+            {
+                return NotFound();
+            }
+
+            return View(receiptResource);
+        }
+
+        // POST: ReceiptResource/Activate/5
+        [HttpPost, ActionName("Activate")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ActivateConfirmed(Guid id)
+        {
+            var receiptResource = await _context.ResourcesOfReceipt.FindAsync(id);
+            if (receiptResource != null)
+            {
+                receiptResource.Condition = Condition.Active;
                 _context.ResourcesOfReceipt.Update(receiptResource);
             }
 

@@ -22,40 +22,37 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="navbar-collapse collapse dropdown-menu-sm-start d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="" asp-controller="Home"
-                           asp-action="Privacy">Privacy</a>
-                    </li>
-                    <li class="nav-item">
+                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                @* <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
+                <div class="dropdown">
+                    <button class="dropbtn">Active Records</button>
+                    <div class="dropdown-content">
                         <a class="nav-link text-light" asp-area="" asp-controller="Client"
                            asp-action="Index">Clients</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link text-light" asp-area="" asp-controller="ReceiptDocument" asp-action="Index">ReceiptDocuments</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link text-light" asp-area="" asp-controller="ReceiptResource" asp-action="Index">ReceiptResources</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="" asp-controller="Resource" asp-action="Index">Resources</a>
-                    </li>
-                    <li class="nav-item">
+                        <a class="nav-link text-light" asp-area="" asp-controller="Resource"
+                           asp-action="Index">Resources</a>
                         <a class="nav-link text-light" asp-area="" asp-controller="ResourceBalance" asp-action="Index">ResourceBalances</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link text-light" asp-area="" asp-controller="ShippingDocument" asp-action="Index">ShippingDocuments</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link text-light" asp-area="" asp-controller="ShippingResource" asp-action="Index">ShippingResources</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="" asp-controller="UnitOfMeasurement" asp-action="Index">UnitsOfMeasurement</a>
-                    </li>
-                </ul>
+                        <a class="nav-link text-light" asp-area="" asp-controller="UnitOfMeasurement"
+                           asp-action="Index">UnitsOfMeasurement</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropbtn">Archived Records</button>
+                    <div class="dropdown-content">
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="Client">Clients</a>
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="ReceiptDocument">ReceiptDocuments</a>
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="ReceiptResource">ReceiptResources</a>
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="Resource">Resources</a>
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="ResourceBalance">ResourceBalances</a>
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="ShippingDocument">ShippingDocuments</a>
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="ShippingResource">ShippingResources</a>
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="UnitOfMeasurement">UnitsOfMeasurement</a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>

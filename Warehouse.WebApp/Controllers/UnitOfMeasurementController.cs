@@ -23,7 +23,13 @@ namespace Warehouse.WebApp.Controllers
         // GET: UnitOfMeasurement
         public async Task<IActionResult> Index()
         {
-            return View(await _context.UnitsOfMeasurement.ToListAsync());
+            return View(await _context.UnitsOfMeasurement.Where(u => u.Condition != Condition.Archived).ToListAsync());
+        }
+        
+        // GET: UnitOfMeasurement
+        public async Task<IActionResult> Archived()
+        {
+            return View(await _context.UnitsOfMeasurement.Where(u => u.Condition == Condition.Archived).ToListAsync());
         }
 
         // GET: UnitOfMeasurement/Details/5
@@ -144,6 +150,40 @@ namespace Warehouse.WebApp.Controllers
             if (unitOfMeasurement != null)
             {
                 unitOfMeasurement.Condition = Condition.Archived;
+                _context.UnitsOfMeasurement.Update(unitOfMeasurement);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        
+        // GET: UnitOfMeasurement/Activate/5
+        public async Task<IActionResult> Activate(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var unitOfMeasurement = await _context.UnitsOfMeasurement
+                .FirstOrDefaultAsync(m => m.Name == id);
+            if (unitOfMeasurement == null)
+            {
+                return NotFound();
+            }
+
+            return View(unitOfMeasurement);
+        }
+
+        // POST: UnitOfMeasurement/Archive/5
+        [HttpPost, ActionName("Activate")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ActivateConfirmed(string id)
+        {
+            var unitOfMeasurement = await _context.UnitsOfMeasurement.FindAsync(id);
+            if (unitOfMeasurement != null)
+            {
+                unitOfMeasurement.Condition = Condition.Active;
                 _context.UnitsOfMeasurement.Update(unitOfMeasurement);
             }
 

@@ -23,7 +23,11 @@ namespace Warehouse.WebApp.Controllers
         // GET: ReceiptDocument
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ReceiptDocuments.ToListAsync());
+            return View(await _context.ReceiptDocuments.Where(rd => rd.Condition != Condition.Archived).ToListAsync());
+        }
+        public async Task<IActionResult> Archived()
+        {
+            return View(await _context.ReceiptDocuments.Where(rd => rd.Condition == Condition.Archived).ToListAsync());
         }
 
         // GET: ReceiptDocument/Details/5
@@ -121,7 +125,7 @@ namespace Warehouse.WebApp.Controllers
             return View(receiptDocument);
         }
 
-        // GET: ReceiptDocument/Delete/5
+        // GET: ReceiptDocument/Archive/5
         public async Task<IActionResult> Archive(Guid? id)
         {
             if (id == null)
@@ -139,7 +143,7 @@ namespace Warehouse.WebApp.Controllers
             return View(receiptDocument);
         }
 
-        // POST: ReceiptDocument/Delete/5
+        // POST: ReceiptDocument/Archive/5
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(Guid id)
@@ -148,6 +152,40 @@ namespace Warehouse.WebApp.Controllers
             if (receiptDocument != null)
             {
                 receiptDocument.Condition = Condition.Archived;
+                _context.ReceiptDocuments.Update(receiptDocument);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        
+        // GET: ReceiptDocument/Activate/5
+        public async Task<IActionResult> Activate(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var receiptDocument = await _context.ReceiptDocuments
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (receiptDocument == null)
+            {
+                return NotFound();
+            }
+
+            return View(receiptDocument);
+        }
+
+        // POST: ReceiptDocument/Activate/5
+        [HttpPost, ActionName("Activate")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ActivateConfirmed(Guid id)
+        {
+            var receiptDocument = await _context.ReceiptDocuments.FindAsync(id);
+            if (receiptDocument != null)
+            {
+                receiptDocument.Condition = Condition.Active;
                 _context.ReceiptDocuments.Update(receiptDocument);
             }
 

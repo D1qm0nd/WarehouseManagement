@@ -23,7 +23,12 @@ namespace Warehouse.WebApp.Controllers
         // GET: Client
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Clients.ToListAsync());
+            return View(await _context.Clients.Where(c => c.Condition != Condition.Archived).ToListAsync());
+        }
+
+        public async Task<IActionResult> Archived()
+        {
+            return View(await _context.Clients.Where(c => c.Condition == Condition.Archived).ToListAsync());
         }
 
         // GET: Client/Details/5
@@ -120,7 +125,7 @@ namespace Warehouse.WebApp.Controllers
             return View(client);
         }
 
-        // GET: Client/Delete/5
+        // GET: Client/Archive/5
         public async Task<IActionResult> Archive(Guid? id)
         {
             if (id == null)
@@ -138,7 +143,7 @@ namespace Warehouse.WebApp.Controllers
             return View(client);
         }
 
-        // POST: Client/Delete/5
+        // POST: Client/Archive/5
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(Guid id)
@@ -147,6 +152,39 @@ namespace Warehouse.WebApp.Controllers
             if (client != null)
             {
                 client.Condition = Condition.Archived;
+                _context.Clients.Update(client);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        
+        public async Task<IActionResult> Activate(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var client = await _context.Clients
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            return View(client);
+        }
+
+        // POST: Client/Archive/5
+        [HttpPost, ActionName("Activate")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ActivateConfirmed(Guid id)
+        {
+            var client = await _context.Clients.FindAsync(id);
+            if (client != null)
+            {
+                client.Condition = Condition.Active;
                 _context.Clients.Update(client);
             }
 

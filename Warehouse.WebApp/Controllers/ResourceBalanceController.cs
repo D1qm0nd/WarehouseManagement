@@ -23,10 +23,18 @@ namespace Warehouse.WebApp.Controllers
         // GET: ResourceBalance
         public async Task<IActionResult> Index()
         {
-            var warehouseDbContext = _context.ResourceBalances.Include(r => r.Resource).Include(r => r.UnitOfMeasurement);
+            var warehouseDbContext = _context.ResourceBalances.Where(r => r.Condition != Condition.Archived).Include(r => r.Resource).Include(r => r.UnitOfMeasurement);
             return View(await warehouseDbContext.ToListAsync());
         }
 
+        
+        // GET: ResourceBalance
+        public async Task<IActionResult> Archived()
+        {
+            var warehouseDbContext = _context.ResourceBalances.Include(r => r.Resource).Include(r => r.UnitOfMeasurement);
+            return View(await warehouseDbContext.Where(rb => rb.Condition == Condition.Archived).ToListAsync());
+        }
+        
         // GET: ResourceBalance/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -154,6 +162,42 @@ namespace Warehouse.WebApp.Controllers
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(Guid id)
+        {
+            var resourceBalance = await _context.ResourceBalances.FindAsync(id);
+            if (resourceBalance != null)
+            {
+                resourceBalance.Condition = Condition.Archived;
+                _context.ResourceBalances.Update(resourceBalance);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        
+        // GET: ResourceBalance/Archive/5
+        public async Task<IActionResult> Activate(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var resourceBalance = await _context.ResourceBalances
+                .Include(r => r.Resource)
+                .Include(r => r.UnitOfMeasurement)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (resourceBalance == null)
+            {
+                return NotFound();
+            }
+
+            return View(resourceBalance);
+        }
+
+        // POST: ResourceBalance/Archive/5
+        [HttpPost, ActionName("Archive")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ActivateConfirmed(Guid id)
         {
             var resourceBalance = await _context.ResourceBalances.FindAsync(id);
             if (resourceBalance != null)

@@ -6,4 +6,10 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Reference Include="Microsoft.EntityFrameworkCore.Abstractions">
+        <HintPath>..\..\..\.nuget\packages\microsoft.entityframeworkcore.abstractions\9.0.8\lib\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

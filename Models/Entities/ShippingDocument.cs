@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Models.Enums;
 using Models.Interfaces;
 using Models.Validators;
@@ -16,4 +17,6 @@ public class ShippingDocument : IDocument, IConditional
     public DateTime Date { get; set; }
     public Guid ClientId { get; set; }
     public Condition Condition { get; set; }
+    [JsonIgnore]
+    public Client Client { get; set; }
 }

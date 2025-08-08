@@ -23,13 +23,13 @@ namespace Warehouse.WebApp.Controllers
         // GET: Resource
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Resources.Where(r => r.Condition == Condition.Archived).ToListAsync());
+            return View(await _context.Resources.Where(r => r.Condition != Condition.Archived).ToListAsync());
         }
 
         // GET: Resource
         public async Task<IActionResult> Archived()
         {
-            return View(await _context.Resources.Where(r => r.Condition != Condition.Archived).ToListAsync());
+            return View(await _context.Resources.Where(r => r.Condition == Condition.Archived).ToListAsync());
         }
         
         // GET: Resource/Details/5
@@ -64,7 +64,7 @@ namespace Warehouse.WebApp.Controllers
         public async Task<IActionResult> Create([Bind("Id,Name,Condition")] Resource resource)
         {
             ModelState.Remove("Condition");
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && !_context.CheckResourceExists(resource))
             {
                 resource.Id = Guid.NewGuid();
                 _context.Add(resource);
@@ -95,14 +95,15 @@ namespace Warehouse.WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Condition")] Resource resource)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name")] Resource resource)
         {
             if (id != resource.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            ModelState.Remove("Condition");
+            if (ModelState.IsValid && !_context.CheckOtherResourceWithNameExists(resource))
             {
                 try
                 {

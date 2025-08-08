@@ -23,7 +23,7 @@ namespace Warehouse.WebApp.Controllers
         // GET: ReceiptResource
         public async Task<IActionResult> Index()
         {
-            var warehouseDbContext = _context.ResourcesOfReceipt.Include(r => r.DocumentOfReceipt).Include(r => r.Resource);
+            var warehouseDbContext = _context.ResourcesOfReceipt.Where(rr => rr.Condition != Condition.Archived).Include(r => r.DocumentOfReceipt).Include(r => r.Resource);
             return View(await warehouseDbContext.Where(rr => rr.Condition != Condition.Archived).ToListAsync());
         }
         
@@ -34,7 +34,7 @@ namespace Warehouse.WebApp.Controllers
             return View(await warehouseDbContext.ToListAsync());
         }
 
-        // GET: ReceiptResource/Details/5
+        // GET: ReceiptResource2/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -45,6 +45,7 @@ namespace Warehouse.WebApp.Controllers
             var receiptResource = await _context.ResourcesOfReceipt
                 .Include(r => r.DocumentOfReceipt)
                 .Include(r => r.Resource)
+                .Include(r => r.UnitOfMeasurement)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (receiptResource == null)
             {
@@ -54,22 +55,31 @@ namespace Warehouse.WebApp.Controllers
             return View(receiptResource);
         }
 
-        // GET: ReceiptResource/Create
+        // GET: ReceiptResource2/Create
         public IActionResult Create()
         {
-            ViewData["ReceiptDocumentId"] = new SelectList(_context.ReceiptDocuments, "Id", "Id");
+            ViewData["ReceiptDocumentId"] = new SelectList(_context.ReceiptDocuments, "Id", "Number");
             ViewData["ResourceId"] = new SelectList(_context.Resources, "Id", "Name");
+            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id");
             return View();
         }
 
-        // POST: ReceiptResource/Create
+        // POST: ReceiptResource2/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ReceiptDocumentId,ResourceId,UnitOfMeasurementId,Count")] ReceiptResource receiptResource)
+        public async Task<IActionResult> Create(
+            [Bind("ResourceId,UnitOfMeasurementId,Count,ReceiptDocumentId")]
+            ReceiptResource receiptResource)
         {
+            ModelState.Remove("Id");
             ModelState.Remove("Condition");
+            ModelState.Remove("State");
+            ModelState.Remove("Resource");
+            ModelState.Remove("UnitOfMeasurement");
+            ModelState.Remove("DocumentOfReceipt");
+            
             if (ModelState.IsValid)
             {
                 receiptResource.Id = Guid.NewGuid();
@@ -77,12 +87,17 @@ namespace Warehouse.WebApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ReceiptDocumentId"] = new SelectList(_context.ReceiptDocuments, "Id", "Id", receiptResource.ReceiptDocumentId);
-            ViewData["ResourceId"] = new SelectList(_context.Resources, "Id", "Name", receiptResource.ResourceId);
+
+            ViewData["ReceiptDocumentId"] = new SelectList(
+                _context.ReceiptDocuments, "Id", "Id", receiptResource.ReceiptDocumentId);
+            ViewData["ResourceId"] = new SelectList(
+                _context.Resources, "Id", "Name", receiptResource.ResourceId);
+            ViewData["UnitOfMeasurementId"] = new SelectList(
+                _context.UnitsOfMeasurement, "Id", "Id", receiptResource.UnitOfMeasurementId);
             return View(receiptResource);
         }
 
-        // GET: ReceiptResource/Edit/5
+        // GET: ReceiptResource2/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -95,23 +110,34 @@ namespace Warehouse.WebApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["ReceiptDocumentId"] = new SelectList(_context.ReceiptDocuments, "Id", "Id", receiptResource.ReceiptDocumentId);
+
+            ViewData["ReceiptDocumentId"] =
+                new SelectList(_context.ReceiptDocuments, "Id", "Id", receiptResource.ReceiptDocumentId);
             ViewData["ResourceId"] = new SelectList(_context.Resources, "Id", "Name", receiptResource.ResourceId);
+            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id",
+                receiptResource.UnitOfMeasurementId);
             return View(receiptResource);
         }
 
-        // POST: ReceiptResource/Edit/5
+        // POST: ReceiptResource2/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,ReceiptDocumentId,ResourceId,UnitOfMeasurementId,Count,Condition")] ReceiptResource receiptResource)
+        public async Task<IActionResult> Edit(Guid id,
+            [Bind("Id,ReceiptDocumentId,ResourceId,UnitOfMeasurementId,Count")]
+            ReceiptResource receiptResource)
         {
             if (id != receiptResource.Id)
             {
                 return NotFound();
             }
 
+            ModelState.Remove("Condition");
+            ModelState.Remove("State");
+            ModelState.Remove("DocumentOfReceipt");
+            ModelState.Remove("Resource");
+            ModelState.Remove("UnitOfMeasurement");
             if (ModelState.IsValid)
             {
                 try
@@ -130,10 +156,15 @@ namespace Warehouse.WebApp.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ReceiptDocumentId"] = new SelectList(_context.ReceiptDocuments, "Id", "Id", receiptResource.ReceiptDocumentId);
-            ViewData["ResourceId"] = new SelectList(_context.Resources, "Id", "Name", receiptResource.ResourceId);
+
+            ViewData["ReceiptDocumentId"] =
+                new SelectList(_context.ReceiptDocuments.Where(rd => rd.Condition != Condition.Archived), "Id", "Id", receiptResource.ReceiptDocumentId);
+            ViewData["ResourceId"] = new SelectList(_context.Resources.Where(r => r.Condition != Condition.Archived), "Id", "Name", receiptResource.ResourceId);
+            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement.Where(u => u.Condition != Condition.Archived), "Id", "Id",
+                receiptResource.UnitOfMeasurementId);
             return View(receiptResource);
         }
 
@@ -172,7 +203,7 @@ namespace Warehouse.WebApp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        
+
         // GET: ReceiptResource/Activate/5
         public async Task<IActionResult> Activate(Guid? id)
         {

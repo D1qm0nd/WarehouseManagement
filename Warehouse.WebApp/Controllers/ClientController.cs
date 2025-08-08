@@ -63,7 +63,7 @@ namespace Warehouse.WebApp.Controllers
         public async Task<IActionResult> Create([Bind("Name,Address")] Client client)
         {
             ModelState.Remove(nameof(Client.ResourceBalances));
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && !_context.CheckClientExists(client))
             {
                 client.Id = Guid.NewGuid();
                 client.Condition = Condition.Active;
@@ -95,14 +95,15 @@ namespace Warehouse.WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Address,Condition")] Client client)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Address")] Client client)
         {
             if (id != client.Id)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            ModelState.Remove("ResourceBalances");
+            ModelState.Remove("Condition");
+            if (ModelState.IsValid && !_context.CheckOtherClientWithNameExists(client))
             {
                 try
                 {

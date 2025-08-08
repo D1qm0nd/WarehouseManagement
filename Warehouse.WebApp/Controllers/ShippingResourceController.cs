@@ -65,7 +65,7 @@ namespace Warehouse.WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ResourceId,UnitOfMeasurementId,Count,Condition")] ShippingResource shippingResource)
+        public async Task<IActionResult> Create([Bind("ResourceId,UnitOfMeasurementId,Count")] ShippingResource shippingResource)
         {
             if (ModelState.IsValid)
             {

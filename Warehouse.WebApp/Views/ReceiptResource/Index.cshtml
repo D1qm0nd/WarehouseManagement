@@ -10,44 +10,45 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table class="table" id="custom-table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UnitOfMeasurementId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Count)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DocumentOfReceipt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Resource)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Condition)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Resource)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Count)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UnitOfMeasurement)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocumentOfReceipt)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.State)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.UnitOfMeasurementId)
+                @Html.DisplayFor(modelItem => item.Resource.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Count)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DocumentOfReceipt.Id)
+                @Html.DisplayFor(modelItem => item.UnitOfMeasurementId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Resource.Name)
+                @Html.DisplayFor(modelItem => item.DocumentOfReceipt.Number)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Condition)
+                @Html.DisplayFor(modelItem => item.State)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
@@ -55,6 +56,6 @@
                 <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

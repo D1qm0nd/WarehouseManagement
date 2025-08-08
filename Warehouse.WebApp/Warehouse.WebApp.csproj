@@ -21,4 +21,17 @@
       <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\ReceiptResource\Activate.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ReceiptResource\Archive.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ReceiptResource\Archived.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ReceiptResource\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ReceiptResource\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ReceiptResource\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ReceiptResource\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ResourceBalanceControllerOld\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ResourceBalanceControllerOld\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Archive\Index.cshtml" />
+    </ItemGroup>
+
 </Project>

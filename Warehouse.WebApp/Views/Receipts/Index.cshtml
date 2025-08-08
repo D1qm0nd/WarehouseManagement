@@ -1,0 +1,77 @@
+@model IEnumerable<Models.Entities.ReceiptDocument>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<table id="receipts">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Number)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            Resource Name
+        </th>
+        <th>
+            Count
+        </th>
+        <th>
+            Unit of measurement
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var document in Model)
+    {
+        <tr tag="@document.Number">
+            @{
+                var rrcount = @document.ReceiptResources.Count+1;
+            }
+            <td rowspan="@rrcount">
+                @{
+                    var dnum = document.Number;
+                }
+                @Html.DisplayFor(d => dnum)
+            </td>
+            <td rowspan="@rrcount">
+                @{
+                    var rdate = document.Date;
+                }
+                @Html.DisplayFor(d => rdate)
+            </td>
+        </tr>
+        @if (document.ReceiptResources.Any())
+        {
+            @foreach (var rr in document.ReceiptResources)
+            {
+                <tr>
+                    <td>
+                        @{
+                            var rname = rr.Resource.Name;
+                        }
+                        @Html.DisplayFor(model => rname)
+                    </td>
+                    <td>
+                        @{
+                            var rcount = rr.Count;
+                        }
+                        @Html.DisplayFor(model => rcount)
+                    </td>
+                    <td>
+                        @{
+                            var runit = rr.UnitOfMeasurementId;
+                        }
+                        @Html.DisplayFor(model => runit)
+                    </td>
+                </tr>
+            }
+        }
+    }
+    </tbody>
+</table>

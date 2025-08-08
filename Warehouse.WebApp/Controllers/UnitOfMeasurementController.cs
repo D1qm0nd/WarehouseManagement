@@ -41,7 +41,7 @@ namespace Warehouse.WebApp.Controllers
             }
 
             var unitOfMeasurement = await _context.UnitsOfMeasurement
-                .FirstOrDefaultAsync(m => m.Name == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (unitOfMeasurement == null)
             {
                 return NotFound();
@@ -61,9 +61,9 @@ namespace Warehouse.WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Condition")] UnitOfMeasurement unitOfMeasurement)
+        public async Task<IActionResult> Create([Bind("Id,Condition")] UnitOfMeasurement unitOfMeasurement)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && !_context.UnitsOfMeasurement.Any(u => u.Id == unitOfMeasurement.Id))
             {
                 _context.Add(unitOfMeasurement);
                 await _context.SaveChangesAsync();
@@ -95,7 +95,7 @@ namespace Warehouse.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("Name,Condition")] UnitOfMeasurement unitOfMeasurement)
         {
-            if (id != unitOfMeasurement.Name)
+            if (id != unitOfMeasurement.Id)
             {
                 return NotFound();
             }
@@ -109,7 +109,7 @@ namespace Warehouse.WebApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UnitOfMeasurementExists(unitOfMeasurement.Name))
+                    if (!UnitOfMeasurementExists(unitOfMeasurement.Id))
                     {
                         return NotFound();
                     }
@@ -132,7 +132,7 @@ namespace Warehouse.WebApp.Controllers
             }
 
             var unitOfMeasurement = await _context.UnitsOfMeasurement
-                .FirstOrDefaultAsync(m => m.Name == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (unitOfMeasurement == null)
             {
                 return NotFound();
@@ -166,7 +166,7 @@ namespace Warehouse.WebApp.Controllers
             }
 
             var unitOfMeasurement = await _context.UnitsOfMeasurement
-                .FirstOrDefaultAsync(m => m.Name == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (unitOfMeasurement == null)
             {
                 return NotFound();
@@ -193,7 +193,7 @@ namespace Warehouse.WebApp.Controllers
 
         private bool UnitOfMeasurementExists(string id)
         {
-            return _context.UnitsOfMeasurement.Any(e => e.Name == id);
+            return _context.UnitsOfMeasurement.Any(e => e.Id == id);
         }
     }
 }

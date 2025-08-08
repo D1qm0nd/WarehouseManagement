@@ -9,7 +9,7 @@ namespace Models.Entities;
 public class UnitOfMeasurement : IConditional
 {
     [Key]
-    public String Name { get; set; }
+    public String Id { get; set; }
 
     public Condition Condition { get; set; }
 }

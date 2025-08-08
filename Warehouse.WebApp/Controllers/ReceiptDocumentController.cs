@@ -59,11 +59,12 @@ namespace Warehouse.WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Number,Date,Condition")] ReceiptDocument receiptDocument)
+        public async Task<IActionResult> Create([Bind("Number,Date")] ReceiptDocument receiptDocument)
         {
             ModelState.Remove("Condition");
             ModelState.Remove("Date");
-            if (ModelState.IsValid)
+            ModelState.Remove("ReceiptResources");
+            if (ModelState.IsValid && !_context.CheckReceiptDocumentWithNumber(receiptDocument))
             {
                 receiptDocument.Id = Guid.NewGuid();
                 receiptDocument.Date = receiptDocument.Date.ToUniversalTime();

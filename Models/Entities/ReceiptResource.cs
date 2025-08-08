@@ -7,14 +7,14 @@ using Models.Interfaces;
 namespace Models.Entities;
 
 [Table("ReceiptResources")]
-public class ReceiptResource : IConditional
+public class ReceiptResource : IConditional, IResource
 {
     [Key]
     public Guid Id { get; set; }
     public Guid ReceiptDocumentId { get; set; }
     public Guid ResourceId { get; set; }
-    public Guid UnitOfMeasurementId { get; set; }
-    public ulong Count { get; set; }
+    public String UnitOfMeasurementId { get; set; }
+    public decimal Count { get; set; }
     
     [JsonIgnore]
     public ReceiptDocument DocumentOfReceipt { get; set; }
@@ -26,4 +26,5 @@ public class ReceiptResource : IConditional
     public UnitOfMeasurement UnitOfMeasurement { get; set; }
 
     public Condition Condition { get; set; }
+    public ResourceState State { get; set; }
 }

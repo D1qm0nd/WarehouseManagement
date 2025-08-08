@@ -23,19 +23,22 @@ namespace Warehouse.WebApp.Controllers
         // GET: ResourceBalance
         public async Task<IActionResult> Index()
         {
-            var warehouseDbContext = _context.ResourceBalances.Where(r => r.Condition != Condition.Archived).Include(r => r.Resource).Include(r => r.UnitOfMeasurement);
-            return View(await warehouseDbContext.ToListAsync());
+            var warehouseDbContext = _context.ResourceBalances.Where(rb => rb.Condition != Condition.Archived).Include(r => r.Resource).Include(r => r.UnitOfMeasurement);
+            ViewData["ResourcesList"] = _context.Resources.Where(r => r.Condition != Condition.Archived);
+            ViewData["UnitOfMeasurementList"] = _context.UnitsOfMeasurement.Where(r => r.Condition != Condition.Archived);
+            return View(await warehouseDbContext.ToListAsync()); 
         }
-
         
         // GET: ResourceBalance
         public async Task<IActionResult> Archived()
         {
-            var warehouseDbContext = _context.ResourceBalances.Include(r => r.Resource).Include(r => r.UnitOfMeasurement);
-            return View(await warehouseDbContext.Where(rb => rb.Condition == Condition.Archived).ToListAsync());
+            var warehouseDbContext = _context.ResourceBalances.Where(rb => rb.Condition == Condition.Archived).Include(r => r.Resource).Include(r => r.UnitOfMeasurement);
+            ViewData["ResourcesList"] = _context.Resources.Where(r => r.Condition == Condition.Archived).ToList();
+            ViewData["UnitOfMeasurementList"] = _context.UnitsOfMeasurement.Where(r => r.Condition == Condition.Archived);
+            return View(await warehouseDbContext.ToListAsync());
         }
-        
-        // GET: ResourceBalance/Details/5
+
+        // GET: ResourceBalance2/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -55,22 +58,24 @@ namespace Warehouse.WebApp.Controllers
             return View(resourceBalance);
         }
 
-        // GET: ResourceBalance/Create
+        // GET: ResourceBalance2/Create
         public IActionResult Create()
         {
             ViewData["ResourceId"] = new SelectList(_context.Resources, "Id", "Name");
-            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Name", "Name");
+            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id");
             return View();
         }
 
-        // POST: ResourceBalance/Create
+        // POST: ResourceBalance2/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ResourceId,UnitOfMeasurementId,Count")] ResourceBalance resourceBalance)
+        public async Task<IActionResult> Create([Bind("Id,ResourceId,UnitOfMeasurementId,Count")] ResourceBalance resourceBalance)
         {
             ModelState.Remove("Condition");
+            ModelState.Remove("Resource");
+            ModelState.Remove("UnitOfMeasurement");
             if (ModelState.IsValid)
             {
                 resourceBalance.Id = Guid.NewGuid();
@@ -79,11 +84,11 @@ namespace Warehouse.WebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ResourceId"] = new SelectList(_context.Resources, "Id", "Name", resourceBalance.ResourceId);
-            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Name", "Name", resourceBalance.UnitOfMeasurementId);
+            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id", resourceBalance.UnitOfMeasurementId);
             return View(resourceBalance);
         }
 
-        // GET: ResourceBalance/Edit/5
+        // GET: ResourceBalance2/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -97,11 +102,11 @@ namespace Warehouse.WebApp.Controllers
                 return NotFound();
             }
             ViewData["ResourceId"] = new SelectList(_context.Resources, "Id", "Name", resourceBalance.ResourceId);
-            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Name", "Name", resourceBalance.UnitOfMeasurementId);
+            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id", resourceBalance.UnitOfMeasurementId);
             return View(resourceBalance);
         }
 
-        // POST: ResourceBalance/Edit/5
+        // POST: ResourceBalance2/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -134,7 +139,7 @@ namespace Warehouse.WebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ResourceId"] = new SelectList(_context.Resources, "Id", "Name", resourceBalance.ResourceId);
-            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Name", "Name", resourceBalance.UnitOfMeasurementId);
+            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id", resourceBalance.UnitOfMeasurementId);
             return View(resourceBalance);
         }
 
@@ -173,7 +178,7 @@ namespace Warehouse.WebApp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        
+
         // GET: ResourceBalance/Archive/5
         public async Task<IActionResult> Activate(Guid? id)
         {
@@ -214,5 +219,17 @@ namespace Warehouse.WebApp.Controllers
         {
             return _context.ResourceBalances.Any(e => e.Id == id);
         }
+
+        public IActionResult Search()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public IActionResult OnGetPartial() =>
+            new PartialViewResult
+            {
+                ViewName = "ResourceBalancePartial",
+                ViewData = ViewData
+            };
     }
 }

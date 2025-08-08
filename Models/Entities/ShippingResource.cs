@@ -7,18 +7,18 @@ using Models.Interfaces;
 namespace Models.Entities;
 
 [Table("ShippingResource")]
-public class ShippingResource : IConditional
+public class ShippingResource : IConditional, IResource
 {
     [Key]
     public Guid Id { get; set; }
     public Guid ResourceId { get; set; }
     public Guid UnitOfMeasurementId { get; set; }
     public ulong Count { get; set; }
-    
     [JsonIgnore]
     public Resource Resource  { get; set; }
     [JsonIgnore]
     public UnitOfMeasurement UnitOfMeasurement { get; set; }
-
     public Condition Condition { get; set; }
+
+    public ResourceState State { get; set; }
 }

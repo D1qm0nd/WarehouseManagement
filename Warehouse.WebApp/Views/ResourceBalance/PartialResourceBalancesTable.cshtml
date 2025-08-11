@@ -1,0 +1,22 @@
+@model IEnumerable<Models.Entities.ResourceBalance>
+
+
+<table class="table" id="custom-table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Count)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Resource)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UnitOfMeasurement)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @await Html.PartialAsync("PartialResourceBalances",Model)
+    </tbody>
+</table>

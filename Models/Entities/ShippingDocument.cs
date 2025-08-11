@@ -14,8 +14,18 @@ public class ShippingDocument : IDocument, IConditional
     public Guid Id { get; set; }
     public ulong Number { get; set; }
     [CustomValidation(typeof(DateValidator), "IsValid")]
-    public DateTime Date { get; set; }
+    
+    private DateTime _date;
+    public DateTime Date { get => _date;
+        set
+        {
+            _date = value.ToUniversalTime();
+        }
+    }
     public Guid ClientId { get; set; }
+    
+    public DocumentStatus Status { get; set; }
+    
     public Condition Condition { get; set; }
     [JsonIgnore]
     public Client Client { get; set; }

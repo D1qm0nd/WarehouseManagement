@@ -6,35 +6,59 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Database;
+using Microsoft.AspNetCore.Html;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.Primitives;
 using Models.Entities;
 using Models.Enums;
+using Warehouse.WebApp.Models;
 
 namespace Warehouse.WebApp.Controllers
 {
     public class ResourceBalanceController : Controller
     {
         private readonly WarehouseDbContext _context;
+        private ResourceBalancesViewModel _viewModel;
 
         public ResourceBalanceController(WarehouseDbContext context)
         {
             _context = context;
+            _viewModel = new ResourceBalancesViewModel()
+            {
+                ResourcesForSearch = _context.Resources.Where(r => r.Condition != Condition.Archived)
+                    .Select(c => new SelectListItem(c.Name, c.Id.ToString())).ToList(),
+                UnitForSearch = _context.UnitsOfMeasurement.Where(u => u.Condition != Condition.Archived)
+                    .Select(u => new SelectListItem(u.Id, u.Id)).ToList(),
+                Balances = GetResourceBalances()
+            };
         }
 
         // GET: ResourceBalance
         public async Task<IActionResult> Index()
         {
-            var warehouseDbContext = _context.ResourceBalances.Where(rb => rb.Condition != Condition.Archived).Include(r => r.Resource).Include(r => r.UnitOfMeasurement);
-            ViewData["ResourcesList"] = _context.Resources.Where(r => r.Condition != Condition.Archived);
-            ViewData["UnitOfMeasurementList"] = _context.UnitsOfMeasurement.Where(r => r.Condition != Condition.Archived);
-            return View(await warehouseDbContext.ToListAsync()); 
+            // var warehouseDbContext =
+            //     _context.ResourceBalances
+            //         .Where(rb => rb.Condition != Condition.Archived)
+            //         .Include(r => r.Resource)
+            //         .Include(r => r.UnitOfMeasurement);
+            // _viewModel.Balances = warehouseDbContext.ToList();
+            return View(_viewModel);
         }
-        
+
+        public async Task<IActionResult> ClearSearchResult()
+        {
+            _viewModel.Balances = GetResourceBalances();
+            return View(nameof(Index), _viewModel);
+        }
+
         // GET: ResourceBalance
         public async Task<IActionResult> Archived()
         {
-            var warehouseDbContext = _context.ResourceBalances.Where(rb => rb.Condition == Condition.Archived).Include(r => r.Resource).Include(r => r.UnitOfMeasurement);
+            var warehouseDbContext = _context.ResourceBalances.Where(rb => rb.Condition == Condition.Archived)
+                .Include(r => r.Resource).Include(r => r.UnitOfMeasurement);
             ViewData["ResourcesList"] = _context.Resources.Where(r => r.Condition == Condition.Archived).ToList();
-            ViewData["UnitOfMeasurementList"] = _context.UnitsOfMeasurement.Where(r => r.Condition == Condition.Archived);
+            ViewData["UnitOfMeasurementList"] =
+                _context.UnitsOfMeasurement.Where(r => r.Condition == Condition.Archived);
             return View(await warehouseDbContext.ToListAsync());
         }
 
@@ -71,20 +95,24 @@ namespace Warehouse.WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ResourceId,UnitOfMeasurementId,Count")] ResourceBalance resourceBalance)
+        public async Task<IActionResult> Create(
+            [Bind("Id,ResourceId,UnitOfMeasurementId,Count")]
+            ResourceBalance resourceBalance)
         {
             ModelState.Remove("Condition");
             ModelState.Remove("Resource");
             ModelState.Remove("UnitOfMeasurement");
             if (ModelState.IsValid)
             {
-                resourceBalance.Id = Guid.NewGuid();
+                resourceBalance.Id = resourceBalance.ResourceId;
                 _context.Add(resourceBalance);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["ResourceId"] = new SelectList(_context.Resources, "Id", "Name", resourceBalance.ResourceId);
-            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id", resourceBalance.UnitOfMeasurementId);
+            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id",
+                resourceBalance.UnitOfMeasurementId);
             return View(resourceBalance);
         }
 
@@ -102,7 +130,8 @@ namespace Warehouse.WebApp.Controllers
                 return NotFound();
             }
             ViewData["ResourceId"] = new SelectList(_context.Resources, "Id", "Name", resourceBalance.ResourceId);
-            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id", resourceBalance.UnitOfMeasurementId);
+            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id",
+                resourceBalance.UnitOfMeasurementId);
             return View(resourceBalance);
         }
 
@@ -111,7 +140,9 @@ namespace Warehouse.WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,ResourceId,UnitOfMeasurementId,Count,Condition")] ResourceBalance resourceBalance)
+        public async Task<IActionResult> Edit(Guid id,
+            [Bind("Id,ResourceId,UnitOfMeasurementId,Count,Condition")]
+            ResourceBalance resourceBalance)
         {
             if (id != resourceBalance.Id)
             {
@@ -136,10 +167,13 @@ namespace Warehouse.WebApp.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["ResourceId"] = new SelectList(_context.Resources, "Id", "Name", resourceBalance.ResourceId);
-            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id", resourceBalance.UnitOfMeasurementId);
+            ViewData["UnitOfMeasurementId"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id",
+                resourceBalance.UnitOfMeasurementId);
             return View(resourceBalance);
         }
 
@@ -220,15 +254,39 @@ namespace Warehouse.WebApp.Controllers
             return _context.ResourceBalances.Any(e => e.Id == id);
         }
 
-        public IActionResult Search()
+
+        [HttpPost]
+        public async Task<IActionResult> Search()
         {
-            throw new NotImplementedException();
+            var selectedResources = Request.Form["resourceSelector"];
+            var selectUnits = Request.Form["unitSelector"];
+
+            var res = await Search(selectedResources, selectUnits).ToListAsync();
+            _viewModel.Balances = res;
+
+            return View(nameof(Index),_viewModel);
         }
-        
+
+        public List<ResourceBalance> GetResourceBalances() => _context.ResourceBalances
+            .Include(r => r.Resource)
+            .Include(r => r.UnitOfMeasurement)
+            .Where(rb => rb.Condition == Condition.Active).ToList();
+
+        private IQueryable<ResourceBalance> Search(StringValues selectedResources, StringValues selectUnits)
+        {
+            return _context.ResourceBalances
+                .Include(r => r.Resource)
+                .Include(r => r.UnitOfMeasurement)
+                .Where(rb =>
+                    rb.Condition == Condition.Active &&
+                    selectUnits.Contains(rb.UnitOfMeasurementId) ||
+                    selectedResources.Contains(rb.Resource.Id.ToString()));
+        }
+
         public IActionResult OnGetPartial() =>
             new PartialViewResult
             {
-                ViewName = "ResourceBalancePartial",
+                ViewName = "ResourceBalance",
                 ViewData = ViewData
             };
     }

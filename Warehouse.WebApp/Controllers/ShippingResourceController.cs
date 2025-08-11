@@ -23,7 +23,7 @@ namespace Warehouse.WebApp.Controllers
         // GET: ShippingResource
         public async Task<IActionResult> Index()
         {
-            var warehouseDbContext = _context.ShippingResources.Where(sr => sr.Condition != Condition.Archived).Include(s => s.Resource);
+            var warehouseDbContext = _context.ShippingResources.Where(sr => sr.Condition == Condition.Active).Include(s => s.Resource);
             return View(await warehouseDbContext.ToListAsync());
         }
 
@@ -56,7 +56,8 @@ namespace Warehouse.WebApp.Controllers
         // GET: ShippingResource/Create
         public IActionResult Create()
         {
-            ViewData["ResourceId"] = new SelectList(_context.Resources, "Id", "Name");
+            ViewData["ResourceId"] = new SelectList(_context.Resources.Where(r => r.Condition == Condition.Active), "Id", "Name");
+            ViewData["UnitsOfMeasurement"] = new SelectList(_context.UnitsOfMeasurement.Where(u => u.Condition == Condition.Active), "Id", "Id");
             return View();
         }
 
@@ -67,6 +68,9 @@ namespace Warehouse.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ResourceId,UnitOfMeasurementId,Count")] ShippingResource shippingResource)
         {
+            ModelState.Remove("Resource");
+            ModelState.Remove("UnitOfMeasurement");
+            ModelState.Remove("Condition");
             if (ModelState.IsValid)
             {
                 shippingResource.Id = Guid.NewGuid();
@@ -74,7 +78,8 @@ namespace Warehouse.WebApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ResourceId"] = new SelectList(_context.Resources, "Id", "Name", shippingResource.ResourceId);
+            ViewData["ResourceId"] = new SelectList(_context.Resources.Where(r => r.Condition == Condition.Active), "Id", "Name");
+            ViewData["UnitsOfMeasurement"] = new SelectList(_context.UnitsOfMeasurement.Where(u => u.Condition == Condition.Active), "Id", "Id");
             return View(shippingResource);
         }
 

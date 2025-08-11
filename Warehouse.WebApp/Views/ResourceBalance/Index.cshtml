@@ -1,7 +1,7 @@
 @using System.Collections
 @using Models.Entities
 
-@model IEnumerable<ResourceBalance>
+@model ResourceBalancesViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -15,47 +15,6 @@
 </p>
 
 <div>
-    @{
-        var resources = (IEnumerable<Resource>)ViewData["ResourcesList"]!;
-        var units = (IEnumerable<UnitOfMeasurement>)ViewData["UnitOfMeasurementList"]!;
-    }
-    <form asp-action="Search">
-        <select name="Resources" multiple="multiple">
-            @{
-                foreach (var res in resources)
-                {
-                    <option value="@res.Id">@res.Name</option>
-                }
-            }
-        </select>
-        <select name="UnitsOfMeasurement" multiple="multiple">
-            @{
-                foreach (var unit in units)
-                {
-                    <option value="@unit.Id">@unit.Id</option>
-                }
-            }
-        </select>
-        <button onsubmit=""></button>
-    </form>
-    
-    <table class="table" id="custom-table">
-        <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Count)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Resource)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UnitOfMeasurement)
-            </th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-            @await Html.PartialAsync("PartialResourceBalances")
-        </tbody>
-    </table>
+    @await Html.PartialAsync("PartialSearchResourceBalance",Model)
+    @await Html.PartialAsync("PartialResourceBalancesTable", Model.Balances)
 </div>

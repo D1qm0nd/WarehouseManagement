@@ -6,13 +6,13 @@ using Models.Interfaces;
 
 namespace Models.Entities;
 
-[Table("ShippingResource")]
+[Table("ShippingResources")]
 public class ShippingResource : IConditional, IResource
 {
     [Key]
     public Guid Id { get; set; }
     public Guid ResourceId { get; set; }
-    public Guid UnitOfMeasurementId { get; set; }
+    public String UnitOfMeasurementId { get; set; }
     public ulong Count { get; set; }
     [JsonIgnore]
     public Resource Resource  { get; set; }

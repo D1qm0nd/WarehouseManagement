@@ -23,9 +23,10 @@ namespace Warehouse.WebApp.Controllers
         // GET: ShippingDocument
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ShippingDocuments.Where(sd => sd.Condition != Condition.Archived).ToListAsync());
+            return View(await _context.ShippingDocuments.Include(sd => sd.Client)
+                .Where(sd => sd.Condition != Condition.Archived).ToListAsync());
         }
-        
+
         public async Task<IActionResult> Archived()
         {
             return View(await _context.ShippingDocuments.Where(sd => sd.Condition == Condition.Archived).ToListAsync());
@@ -52,6 +53,7 @@ namespace Warehouse.WebApp.Controllers
         // GET: ShippingDocument/Create
         public IActionResult Create()
         {
+            ViewData["ClientId"] = new SelectList(_context.Clients.ToList(), "Id", "Name");
             return View();
         }
 
@@ -62,14 +64,27 @@ namespace Warehouse.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Number,Date,ClientId")] ShippingDocument shippingDocument)
         {
+            ModelState.Remove("Date");
             ModelState.Remove("Condition");
+            ModelState.Remove("Client");
             if (ModelState.IsValid)
             {
+                if (_context.ShippingDocuments.FirstOrDefault(sd =>
+                        sd.Number == shippingDocument.Number
+                        && sd.Date == shippingDocument.Date
+                        && sd.ClientId == shippingDocument.ClientId) != null)
+                {
+                    ModelState.AddModelError("Number", "Same record already exists in system");
+                    return View(shippingDocument);
+                }
+
                 shippingDocument.Id = Guid.NewGuid();
+                shippingDocument.Date = shippingDocument.Date.ToUniversalTime(); //TODO: Check
                 _context.Add(shippingDocument);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(shippingDocument);
         }
 
@@ -86,6 +101,7 @@ namespace Warehouse.WebApp.Controllers
             {
                 return NotFound();
             }
+
             return View(shippingDocument);
         }
 
@@ -94,7 +110,9 @@ namespace Warehouse.WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Number,Date,ClientId,Condition")] ShippingDocument shippingDocument)
+        public async Task<IActionResult> Edit(Guid id,
+            [Bind("Id,Number,Date,ClientId,Condition")]
+            ShippingDocument shippingDocument)
         {
             if (id != shippingDocument.Id)
             {
@@ -119,8 +137,10 @@ namespace Warehouse.WebApp.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(shippingDocument);
         }
 
@@ -157,7 +177,7 @@ namespace Warehouse.WebApp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        
+
         // GET: ShippingDocument/Activate/5
         public async Task<IActionResult> Activate(Guid? id)
         {

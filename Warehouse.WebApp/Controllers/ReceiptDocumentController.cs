@@ -67,7 +67,7 @@ namespace Warehouse.WebApp.Controllers
             if (ModelState.IsValid && !_context.CheckReceiptDocumentWithNumber(receiptDocument))
             {
                 receiptDocument.Id = Guid.NewGuid();
-                receiptDocument.Date = receiptDocument.Date.ToUniversalTime();
+                receiptDocument.Date = receiptDocument.Date.ToUniversalTime(); //TODO: Check
                 _context.Add(receiptDocument);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

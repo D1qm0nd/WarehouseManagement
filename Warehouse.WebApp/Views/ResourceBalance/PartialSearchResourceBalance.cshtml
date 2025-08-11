@@ -1,0 +1,12 @@
+@model ResourceBalancesViewModel
+
+<form asp-action="Search" class="search-form">
+    @* @Html.ListBoxFor(model => model.SelectedResources, Model.ResourcesForSearch) *@
+    @* @Html.ListBoxFor(model => model.SelectedUnits, Model.UnitForSearch) *@
+    <select class="select-container" name="resourceSelector" asp-items="Model.ResourcesForSearch" multiple="multiple">Resources</select>
+    <select class="select-container" name="unitSelector" asp-items="Model.UnitForSearch" multiple="multiple">UnitsOfMeasurement</select>
+    <div class="form-group flex-column">
+        <input type="submit" value="Search" class="btn btn-primary"/>
+        <input type="submit" value="ClearSearchResults" asp-action="ClearSearchResult" class="btn btn-primary"/>
+    </div>
+</form>

@@ -9,12 +9,12 @@ namespace Models.Entities;
 [Table("ResourceBalances")]
 public class ResourceBalance : IConditional
 {
-    [Key]
+    [CustomValidation(typeof(ResourceBalanceValidator), "Validate")]
     public Guid Id { get; set; }
     public Guid ResourceId { get; set; }
     public String UnitOfMeasurementId { get; set; }
-    public ulong Count { get; set; }
     
+    public ulong Count { get; set; }
     [JsonIgnore]
     [ForeignKey("ResourceId")]
     public Resource Resource { get; set; }

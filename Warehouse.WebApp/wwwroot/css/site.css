@@ -8,6 +8,25 @@ html {
     }
 }
 
+.search-form {
+    display: flex;
+    justify-content: flex-start;
+    flex-flow: wrap-reverse;
+    align-items: center;
+}
+
+.select-container {
+    width: max-content;
+    min-width: 20%;
+    background: white;
+    border: orange inset;
+    border-radius: 3%;
+}
+
+.height-max {
+    height: 100%;
+}
+
 #custom-table {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;

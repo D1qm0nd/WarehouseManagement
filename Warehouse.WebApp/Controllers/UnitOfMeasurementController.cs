@@ -113,13 +113,17 @@ namespace Warehouse.WebApp.Controllers
                 return NotFound();
             }
 
-            var unitOfMeasurement = await _context.UnitsOfMeasurement
+            var unitOfMeasurement = await _context.UnitsOfMeasurement.Include(u => u.Resource)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (unitOfMeasurement == null)
             {
                 return NotFound();
             }
 
+            throw new NotImplementedException();
+            
+            // if () //TODO: !!!
+            
             return View(unitOfMeasurement);
         }
 

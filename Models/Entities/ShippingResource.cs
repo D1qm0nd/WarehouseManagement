@@ -14,7 +14,7 @@ public class ShippingResource : IConditional, IStatelessResource
     public Guid ResourceId { get; set; }
     public Guid ShippingDocumentId { get; set; }
     public String UnitOfMeasurementId { get; set; }
-    public ulong Count { get; set; }
+    public decimal Count { get; set; }
     [JsonIgnore]
     public Resource Resource  { get; set; }
     [JsonIgnore]

@@ -33,7 +33,7 @@ public class WarehouseDbContext : DbContext
     public WarehouseDbContext(DbContextOptionsBuilder<WarehouseDbContext> optionsBuilder) : base(optionsBuilder.Options)
     {
         this.Database.EnsureCreated();
-        if (_SqlScriptInitialized)
+        if (_SqlScriptInitialized == false)
         {
             String script = $"""
                              SET search_path TO "WarehouseDbSchema";

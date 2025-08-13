@@ -23,14 +23,14 @@ namespace Warehouse.WebApp.Controllers
         // GET: ShippingResource
         public async Task<IActionResult> Index()
         {
-            var warehouseDbContext = _context.ShippingResources.Where(sr => sr.Condition == Condition.Active).Include(s => s.Resource);
+            var warehouseDbContext = _context.ShippingResources.Include(sr => sr.ShippingDocument).Where(sr => sr.Condition == Condition.Active).Include(s => s.Resource);
             return View(await warehouseDbContext.ToListAsync());
         }
 
         // GET: ShippingResource
         public async Task<IActionResult> Archived()
         {
-            var warehouseDbContext = _context.ShippingResources.Where(sr => sr.Condition == Condition.Archived).Include(s => s.Resource);
+            var warehouseDbContext = _context.ShippingResources.Include(sr => sr.ShippingDocument).Where(sr => sr.Condition == Condition.Archived).Include(s => s.Resource);
             return View(await warehouseDbContext.ToListAsync());
         }
         

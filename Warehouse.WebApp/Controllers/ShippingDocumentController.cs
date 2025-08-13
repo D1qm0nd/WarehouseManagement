@@ -39,6 +39,50 @@ namespace Warehouse.WebApp.Controllers
             return View();
         }
 
+        public IActionResult Create2()
+        {
+            ViewData["ClientId"] = new SelectList(_context.Clients.ToList(), "Id", "Name");
+            ViewData["AvailableResources"] = new SelectList(_context.Resources.Where(c => c.Condition == Condition.Active).ToList(), "Id", "Name"); 
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create2([Bind("Number, Date, ClientId")] ShippingDocument shippingDocument)
+        {
+            ModelState.Remove("Date");
+            ModelState.Remove("Condition");
+            ModelState.Remove("Client");
+            ModelState.Remove("ShippingResources");
+            if (ModelState.IsValid)
+            {
+
+                if (_context.ShippingDocuments.FirstOrDefault(sd =>
+                        sd.Number == shippingDocument.Number
+                        && sd.Date == shippingDocument.Date
+                        && sd.ClientId == shippingDocument.ClientId) != null)
+                {
+                    ModelState.AddModelError("Number", "Same record already exists in system");
+                    return View(shippingDocument);
+                }
+                shippingDocument.Id = Guid.NewGuid();
+                shippingDocument.Date = shippingDocument.Date.ToUniversalTime(); //TODO: Check
+                var resources = Request.Form["Resources"];
+                _context.ShippingResources.AddRange(resources.Select(r => new ShippingResource()
+                {
+                    Id = Guid.NewGuid(), 
+                    ResourceId = _context.Resources.First(res => res.Id == Guid.Parse(r)).Id,
+                    ShippingDocumentId = shippingDocument.Id,
+                    //TODO: Count???!!!
+                }));
+                _context.Add(shippingDocument);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(shippingDocument);
+        }
+
         // POST: ShippingDocument/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.

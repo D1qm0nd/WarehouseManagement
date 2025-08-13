@@ -26,5 +26,4 @@ public class ReceiptResource : IConditional, IResource
     public UnitOfMeasurement UnitOfMeasurement { get; set; }
 
     public Condition Condition { get; set; }
-    public ResourceState State { get; set; }
 }

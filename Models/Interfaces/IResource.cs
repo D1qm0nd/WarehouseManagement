@@ -4,6 +4,9 @@ namespace Models.Interfaces;
 
 public interface IResource
 {
+}
+
+public interface IStatelessResource : IResource
+{
     public ResourceState State { get; set; }
-    
 }

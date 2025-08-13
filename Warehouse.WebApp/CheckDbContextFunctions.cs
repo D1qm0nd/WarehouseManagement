@@ -16,7 +16,7 @@ public static class CheckDbContextFunctions
     
     
     public static bool CheckResourceExists(this WarehouseDbContext context, Resource resource) =>
-        context.Clients.Any(c => c.Name == resource.Name);
+        context.Resources.Any(c => c.Name == resource.Name);
 
     public static bool CheckOtherResourceWithNameExists(this WarehouseDbContext context, Resource resource) =>
         context.Resources.Any(r => r.Name == resource.Name && r.Id != resource.Id);

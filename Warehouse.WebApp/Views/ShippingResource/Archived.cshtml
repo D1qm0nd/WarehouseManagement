@@ -7,23 +7,26 @@
 
 <h1>Archive</h1>
 
-<table class="table">
+<table class="table" id="custom-table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UnitOfMeasurementId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Count)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Resource)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.UnitOfMeasurementId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Count)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Resource)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ShippingDocument)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.UnitOfMeasurementId)
@@ -35,11 +38,13 @@
                 @Html.DisplayFor(modelItem => item.Resource.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                @Html.DisplayFor(modelItem => item.ShippingDocumentId)
+            </td>
+            <td>
+                @* <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> | *@
                 <a asp-action="Activate" asp-route-id="@item.Id">Activate</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

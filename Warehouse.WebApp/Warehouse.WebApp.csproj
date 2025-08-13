@@ -32,6 +32,12 @@
       <_ContentIncludedByDefault Remove="Views\ResourceBalanceControllerOld\Create.cshtml" />
       <_ContentIncludedByDefault Remove="Views\ResourceBalanceControllerOld\Details.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Archive\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ResourceBalance\old\Activate.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ResourceBalance\old\Archive.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ResourceBalance\old\Archived.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ResourceBalance\old\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ResourceBalance\old\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ResourceBalance\old\Edit.cshtml" />
     </ItemGroup>
 
 </Project>

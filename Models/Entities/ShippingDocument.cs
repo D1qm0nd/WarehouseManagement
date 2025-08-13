@@ -29,4 +29,7 @@ public class ShippingDocument : IDocument, IConditional
     public Condition Condition { get; set; }
     [JsonIgnore]
     public Client Client { get; set; }
+    
+    [JsonIgnore]
+    public List<ShippingResource> ShippingResources { get; set; }
 }

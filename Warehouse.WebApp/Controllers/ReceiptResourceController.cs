@@ -34,28 +34,7 @@ namespace Warehouse.WebApp.Controllers
             return View(await warehouseDbContext.ToListAsync());
         }
 
-        // GET: ReceiptResource2/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var receiptResource = await _context.ResourcesOfReceipt
-                .Include(r => r.DocumentOfReceipt)
-                .Include(r => r.Resource)
-                .Include(r => r.UnitOfMeasurement)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (receiptResource == null)
-            {
-                return NotFound();
-            }
-
-            return View(receiptResource);
-        }
-
-        // GET: ReceiptResource2/Create
+        // GET: ReceiptResource/Create
         public IActionResult Create()
         {
             ViewData["ReceiptDocumentId"] = new SelectList(_context.ReceiptDocuments, "Id", "Number");
@@ -64,7 +43,7 @@ namespace Warehouse.WebApp.Controllers
             return View();
         }
 
-        // POST: ReceiptResource2/Create
+        // POST: ReceiptResource/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -97,7 +76,7 @@ namespace Warehouse.WebApp.Controllers
             return View(receiptResource);
         }
 
-        // GET: ReceiptResource2/Edit/5
+        // GET: ReceiptResource/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)

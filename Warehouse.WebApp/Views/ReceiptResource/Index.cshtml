@@ -25,9 +25,6 @@
         <th>
             @Html.DisplayNameFor(model => model.DocumentOfReceipt)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.State)
-        </th>
         <th></th>
     </tr>
     </thead>
@@ -48,11 +45,7 @@
                 @Html.DisplayFor(modelItem => item.DocumentOfReceipt.Number)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.State)
-            </td>
-            <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
             </td>
         </tr>

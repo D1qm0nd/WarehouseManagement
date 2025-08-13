@@ -31,28 +31,11 @@ namespace Warehouse.WebApp.Controllers
         {
             return View(await _context.Resources.Where(r => r.Condition == Condition.Archived).ToListAsync());
         }
-        
-        // GET: Resource/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var resource = await _context.Resources
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (resource == null)
-            {
-                return NotFound();
-            }
-
-            return View(resource);
-        }
 
         // GET: Resource/Create
         public IActionResult Create()
         {
+            ViewData["UnitsOfMeasurement"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id");
             return View();
         }
 
@@ -61,16 +44,19 @@ namespace Warehouse.WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Condition")] Resource resource)
+        public async Task<IActionResult> Create([Bind("Id,Name,UnitOfMeasurementId")] Resource resource)
         {
             ModelState.Remove("Condition");
-            if (ModelState.IsValid && !_context.CheckResourceExists(resource))
+            ModelState.Remove(nameof(resource.UnitOfMeasurement));
+            var exists = _context.CheckResourceExists(resource);
+            if (ModelState.IsValid && exists == false)
             {
                 resource.Id = Guid.NewGuid();
                 _context.Add(resource);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["UnitsOfMeasurement"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id");
             return View(resource);
         }
 
@@ -87,6 +73,8 @@ namespace Warehouse.WebApp.Controllers
             {
                 return NotFound();
             }
+
+            ViewData["UnitsOfMeasurement"] = new SelectList(_context.UnitsOfMeasurement, "Id", "Id");
             return View(resource);
         }
 
@@ -95,7 +83,7 @@ namespace Warehouse.WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name")] Resource resource)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,UnitOfMeasurementId")] Resource resource)
         {
             if (id != resource.Id)
             {
@@ -121,8 +109,10 @@ namespace Warehouse.WebApp.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(resource);
         }
 
@@ -159,7 +149,7 @@ namespace Warehouse.WebApp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        
+
         // GET: Resource/Delete/5
         public async Task<IActionResult> Activate(Guid? id)
         {
@@ -193,7 +183,7 @@ namespace Warehouse.WebApp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        
+
 
         private bool ResourceExists(Guid id)
         {

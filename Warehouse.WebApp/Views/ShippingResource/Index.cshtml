@@ -22,6 +22,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Resource)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShippingDocument)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -38,8 +41,10 @@
                 @Html.DisplayFor(modelItem => item.Resource.Name)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.ShippingDocumentId)
+            </td>
+            <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
             </td>
         </tr>

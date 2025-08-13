@@ -32,24 +32,6 @@ namespace Warehouse.WebApp.Controllers
             return View(await _context.ShippingDocuments.Where(sd => sd.Condition == Condition.Archived).ToListAsync());
         }
 
-        // GET: ShippingDocument/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var shippingDocument = await _context.ShippingDocuments
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (shippingDocument == null)
-            {
-                return NotFound();
-            }
-
-            return View(shippingDocument);
-        }
-
         // GET: ShippingDocument/Create
         public IActionResult Create()
         {
@@ -67,6 +49,7 @@ namespace Warehouse.WebApp.Controllers
             ModelState.Remove("Date");
             ModelState.Remove("Condition");
             ModelState.Remove("Client");
+            ModelState.Remove("ShippingResources");
             if (ModelState.IsValid)
             {
                 if (_context.ShippingDocuments.FirstOrDefault(sd =>
@@ -111,14 +94,16 @@ namespace Warehouse.WebApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id,
-            [Bind("Id,Number,Date,ClientId,Condition")]
+            [Bind("Id,Number,Date,ClientId,Status")]
             ShippingDocument shippingDocument)
         {
             if (id != shippingDocument.Id)
             {
                 return NotFound();
             }
-
+            ModelState.Remove(nameof(shippingDocument.ShippingResources));
+            ModelState.Remove(nameof(shippingDocument.Condition));
+            ModelState.Remove(nameof(shippingDocument.Client));
             if (ModelState.IsValid)
             {
                 try

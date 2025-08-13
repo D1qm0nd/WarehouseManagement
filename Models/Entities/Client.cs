@@ -15,7 +15,9 @@ public class Client : IConditional
     public String Name { get; set; }
     public String Address { get; set; }
     public Condition Condition { get; set; }
-
     [JsonIgnore]
-    public List<ResourceBalance> ResourceBalances { get; set; }
+    public List<ShippingDocument> ShippingDocuments { get; set; }
+
+    // [JsonIgnore]
+    // public List<ResourceBalance> ResourceBalances { get; set; }
 }

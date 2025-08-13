@@ -32,24 +32,6 @@ namespace Warehouse.WebApp.Controllers
             return View(await _context.UnitsOfMeasurement.Where(u => u.Condition == Condition.Archived).ToListAsync());
         }
 
-        // GET: UnitOfMeasurement/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var unitOfMeasurement = await _context.UnitsOfMeasurement
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (unitOfMeasurement == null)
-            {
-                return NotFound();
-            }
-
-            return View(unitOfMeasurement);
-        }
-
         // GET: UnitOfMeasurement/Create
         public IActionResult Create()
         {

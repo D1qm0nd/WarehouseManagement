@@ -19,5 +19,4 @@
     <ItemGroup>
       <ProjectReference Include="..\Models\Models.csproj" />
     </ItemGroup>
-
 </Project>

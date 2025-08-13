@@ -1,3 +1,4 @@
+@using Models.Entities
 @model Models.Entities.ShippingDocument
 
 @{
@@ -29,7 +30,13 @@
                 <input asp-for="ClientId" class="form-control" />
                 <span asp-validation-for="ClientId" class="text-danger"></span>
             </div>
-            
+            <div class="form-group">
+                <label asp-for="Status" class="control-label"></label>
+                @{
+                    var items = new List<Int32> { 0, 1, 2 }.Select(c => new SelectListItem(c.ToDocumentStatus().ToString(),c.ToString()));
+                }
+                <select asp-for="Status" class="form-control" asp-items="items"></select>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

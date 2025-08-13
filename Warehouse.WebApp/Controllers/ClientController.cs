@@ -31,24 +31,6 @@ namespace Warehouse.WebApp.Controllers
             return View(await _context.Clients.Where(c => c.Condition == Condition.Archived).ToListAsync());
         }
 
-        // GET: Client/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var client = await _context.Clients
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (client == null)
-            {
-                return NotFound();
-            }
-
-            return View(client);
-        }
-
         // GET: Client/Create
         public IActionResult Create()
         {
@@ -62,7 +44,7 @@ namespace Warehouse.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Address")] Client client)
         {
-            ModelState.Remove(nameof(Client.ResourceBalances));
+            ModelState.Remove(nameof(Client.ShippingDocuments));
             if (ModelState.IsValid && !_context.CheckClientExists(client))
             {
                 client.Id = Guid.NewGuid();
@@ -134,13 +116,16 @@ namespace Warehouse.WebApp.Controllers
                 return NotFound();
             }
 
-            var client = await _context.Clients
+            var client = await _context.Clients.Include(c => c.ShippingDocuments)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (client == null)
             {
                 return NotFound();
             }
 
+            if (client.ShippingDocuments.Any(c => c.Condition == Condition.Active))
+                return RedirectToActionPermanent("Index", "ShippingDocument");
+            
             return View(client);
         }
 

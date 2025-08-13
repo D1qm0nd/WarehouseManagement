@@ -30,24 +30,6 @@ namespace Warehouse.WebApp.Controllers
             return View(await _context.ReceiptDocuments.Where(rd => rd.Condition == Condition.Archived).ToListAsync());
         }
 
-        // GET: ReceiptDocument/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var receiptDocument = await _context.ReceiptDocuments
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (receiptDocument == null)
-            {
-                return NotFound();
-            }
-
-            return View(receiptDocument);
-        }
-
         // GET: ReceiptDocument/Create
         public IActionResult Create()
         {

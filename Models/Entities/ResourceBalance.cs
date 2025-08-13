@@ -6,22 +6,33 @@ using Models.Interfaces;
 
 namespace Models.Entities;
 
-[Table("ResourceBalances")]
-public class ResourceBalance : IConditional
+// [Table("ResourceBalances")]
+// public class ResourceBalance : IConditional
+// {
+//     [CustomValidation(typeof(ResourceBalanceValidator), "Validate")]
+//     public Guid Id { get; set; }
+//     public Guid ResourceId { get; set; }
+//     public String UnitOfMeasurementId { get; set; }
+//     
+//     public ulong Count { get; set; }
+//     [JsonIgnore]
+//     [ForeignKey("ResourceId")]
+//     public Resource Resource { get; set; }
+//
+//     [JsonIgnore]
+//     [ForeignKey("UnitOfMeasurementId")]
+//     public UnitOfMeasurement UnitOfMeasurement { get; set; }
+//
+//     public Condition Condition { get; set; }
+// }
+
+public class ResourceBalance
 {
-    [CustomValidation(typeof(ResourceBalanceValidator), "Validate")]
     public Guid Id { get; set; }
-    public Guid ResourceId { get; set; }
-    public String UnitOfMeasurementId { get; set; }
-    
-    public ulong Count { get; set; }
-    [JsonIgnore]
-    [ForeignKey("ResourceId")]
+    public String Name { get; set; }
+    public Decimal Count { get; set; }
+
+    [JsonIgnore, ForeignKey("Id")]
     public Resource Resource { get; set; }
-
-    [JsonIgnore]
-    [ForeignKey("UnitOfMeasurementId")]
-    public UnitOfMeasurement UnitOfMeasurement { get; set; }
-
-    public Condition Condition { get; set; }
+    
 }

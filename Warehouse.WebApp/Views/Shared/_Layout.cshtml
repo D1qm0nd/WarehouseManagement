@@ -25,36 +25,48 @@
                 <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                 @* <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
                 <div class="dropdown">
-                    <button class="dropbtn">Active Records</button>
+                    <button class="dropbtn">Receipt</button>
                     <div class="dropdown-content">
-                        <a class="nav-link text-light" asp-area="" asp-controller="Client"
-                           asp-action="Index">Clients</a>
-                        <a class="nav-link text-light" asp-area="" asp-controller="ReceiptDocument" asp-action="Index">ReceiptDocuments</a>
-                        <a class="nav-link text-light" asp-area="" asp-controller="ReceiptResource" asp-action="Index">ReceiptResources</a>
-                        <a class="nav-link text-light" asp-area="" asp-controller="Resource"
-                           asp-action="Index">Resources</a>
-                        <a class="nav-link text-light" asp-area="" asp-controller="ResourceBalance" asp-action="Index">ResourceBalances</a>
-                        <a class="nav-link text-light" asp-area="" asp-controller="ShippingDocument" asp-action="Index">ShippingDocuments</a>
-                        <a class="nav-link text-light" asp-area="" asp-controller="ShippingResource" asp-action="Index">ShippingResources</a>
-                        <a class="nav-link text-light" asp-area="" asp-controller="UnitOfMeasurement"
-                           asp-action="Index">UnitsOfMeasurement</a>
+                        <a class="nav-link text-light" asp-area="" asp-controller="ReceiptDocument" asp-action="Index">Documents</a>
+                        <a class="nav-link text-light" asp-area="" asp-controller="ReceiptResource" asp-action="Index">Resources</a>
+                        <a class="nav-link text-light" asp-area="" asp-controller="Receipts" asp-action="Index">Index</a>
                     </div>
                 </div>
                 <div class="dropdown">
-                    <button class="dropbtn">Archived Records</button>
+                    <button class="dropbtn">Shipping</button>
                     <div class="dropdown-content">
-                        <a class="nav-link text-light" asp-action="Archived" asp-controller="Client">Clients</a>
-                        <a class="nav-link text-light" asp-action="Archived" asp-controller="ReceiptDocument">ReceiptDocuments</a>
-                        <a class="nav-link text-light" asp-action="Archived" asp-controller="ReceiptResource">ReceiptResources</a>
-                        <a class="nav-link text-light" asp-action="Archived" asp-controller="Resource">Resources</a>
-                        <a class="nav-link text-light" asp-action="Archived" asp-controller="ResourceBalance">ResourceBalances</a>
-                        <a class="nav-link text-light" asp-action="Archived" asp-controller="ShippingDocument">ShippingDocuments</a>
-                        <a class="nav-link text-light" asp-action="Archived" asp-controller="ShippingResource">ShippingResources</a>
-                        <a class="nav-link text-light" asp-action="Archived" asp-controller="UnitOfMeasurement">UnitsOfMeasurement</a>
+                        <a class="nav-link text-light" asp-area="" asp-controller="ShippingDocument" asp-action="Index">Documents</a>
+                        <a class="nav-link text-light" asp-area="" asp-controller="ShippingResource" asp-action="Index">Resources</a>
                     </div>
                 </div>
-                <a class="nav-link text-light" asp-area="" asp-controller="Receipts" asp-action="Index">ReceiptsController</a>
-                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Shipping</a>
+                <div class="dropdown">
+                    <button class="dropbtn">Catalog</button>
+                    <div class="dropdown-content">
+                        <a class="nav-link text-light" asp-area="" asp-controller="Client"
+                           asp-action="Index">Clients</a>
+                        <a class="nav-link text-light" asp-area="" asp-controller="UnitOfMeasurement"
+                           asp-action="Index">Units Of Measurement</a>
+                        <a class="nav-link text-light" asp-action="Index" asp-controller="Resource">Resources</a>
+                        <a class="nav-link text-light" asp-action="Index" asp-controller="ResourceBalance">Balance</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropbtn">Archive</button>
+                    <div class="dropdown-content">
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="Client">Clients</a>
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="UnitOfMeasurement">Units Of
+                            Measurement</a>
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="Resource">Resources</a>
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="ReceiptDocument">Receipt
+                            Documents</a>
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="ReceiptResource">Receipt
+                            Resources</a>
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="ShippingDocument">Shipping
+                            Documents</a>
+                        <a class="nav-link text-light" asp-action="Archived" asp-controller="ShippingResource">Shipping
+                            Resources</a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>

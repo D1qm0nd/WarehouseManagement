@@ -34,30 +34,12 @@ namespace Warehouse.WebApp.Controllers
             return View(await warehouseDbContext.ToListAsync());
         }
         
-        // GET: ShippingResource/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var shippingResource = await _context.ShippingResources
-                .Include(s => s.Resource)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (shippingResource == null)
-            {
-                return NotFound();
-            }
-
-            return View(shippingResource);
-        }
-
         // GET: ShippingResource/Create
         public IActionResult Create()
         {
             ViewData["ResourceId"] = new SelectList(_context.Resources.Where(r => r.Condition == Condition.Active), "Id", "Name");
             ViewData["UnitsOfMeasurement"] = new SelectList(_context.UnitsOfMeasurement.Where(u => u.Condition == Condition.Active), "Id", "Id");
+            ViewData["ShippingDocumentsId"] = new SelectList(_context.ShippingDocuments.Where(sd => sd.Condition == Condition.Active), "Id", "Number");
             return View();
         }
 
@@ -66,10 +48,11 @@ namespace Warehouse.WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ResourceId,UnitOfMeasurementId,Count")] ShippingResource shippingResource)
+        public async Task<IActionResult> Create([Bind("ShippingDocumentId,ResourceId,UnitOfMeasurementId,Count")] ShippingResource shippingResource)
         {
             ModelState.Remove("Resource");
             ModelState.Remove("UnitOfMeasurement");
+            ModelState.Remove("ShippingDocument");
             ModelState.Remove("Condition");
             if (ModelState.IsValid)
             {

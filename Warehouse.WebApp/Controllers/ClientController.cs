@@ -53,6 +53,7 @@ namespace Warehouse.WebApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(client);
         }
 
@@ -69,6 +70,7 @@ namespace Warehouse.WebApp.Controllers
             {
                 return NotFound();
             }
+
             return View(client);
         }
 
@@ -83,6 +85,7 @@ namespace Warehouse.WebApp.Controllers
             {
                 return NotFound();
             }
+
             ModelState.Remove("ResourceBalances");
             ModelState.Remove("Condition");
             if (ModelState.IsValid && !_context.CheckOtherClientWithNameExists(client))
@@ -103,8 +106,10 @@ namespace Warehouse.WebApp.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(client);
         }
 
@@ -123,9 +128,6 @@ namespace Warehouse.WebApp.Controllers
                 return NotFound();
             }
 
-            if (client.ShippingDocuments.Any(c => c.Condition == Condition.Active))
-                return RedirectToActionPermanent("Index", "ShippingDocument");
-            
             return View(client);
         }
 
@@ -140,11 +142,10 @@ namespace Warehouse.WebApp.Controllers
                 client.Condition = Condition.Archived;
                 _context.Clients.Update(client);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        
+
         public async Task<IActionResult> Activate(Guid? id)
         {
             if (id == null)
